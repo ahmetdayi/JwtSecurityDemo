@@ -14,11 +14,13 @@ import {HttpHeaders} from "@angular/common/http";
 })
 export class AdvertService {
 
+
   constructor(private http:HttpService,
               private tokenService:TokenService) { }
 
-  public createAdvert(request:CreateAdvertRequest):Observable<CreateAdvertResponse>{
+  public async createAdvert(request: CreateAdvertRequest): Promise<Observable<CreateAdvertResponse>> {
+   let header:HttpHeaders = await this.tokenService.tokenHeader()
 
-    return this.http.POST<CreateAdvertResponse>(Endpoints.CREATE_ADVERT,request,this.tokenService.tokenHeader());
+    return this.http.POST<CreateAdvertResponse>(Endpoints.CREATE_ADVERT, request, header);
   }
 }

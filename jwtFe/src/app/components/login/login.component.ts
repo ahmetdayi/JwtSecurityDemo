@@ -8,14 +8,15 @@ import {Endpoints} from "../../utility/endpoints";
 import {NgIf} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoginRequest} from "../../models/loginRequest";
+import {firstValueFrom, toArray} from "rxjs";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-    imports: [
-        ReactiveFormsModule,
-        NgIf
-    ],
+  imports: [
+    ReactiveFormsModule,
+    NgIf
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -26,8 +27,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService:AuthService,
-    private toaster:ToastrService
+    private authService: AuthService,
+    private toaster: ToastrService
   ) {
   }
 
@@ -38,31 +39,32 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.valid) {
       this.loginRequest = this.form.value;
       console.log(this.form.value.username)
 
-      this.login();
+      await this.login();
     } else {
       this.form.markAllAsTouched();
     }
   }
 
-  private login() {
-    this.authService.login(this.loginRequest).subscribe({
-      next:value => {
-        localStorage.clear();
-        localStorage.setItem("jwtToken", value["access_token"])
-        localStorage.setItem("refreshToken", value["refresh_token"])
-        this.toaster.success("Success Login","Successful!!")
-        setTimeout(this.redirectToHome, 1700)
-      },error:err => {
-        this.toaster.error("Cannot Login","Error!!")
-      }
+  private async login() {
+    const response = await firstValueFrom(this.authService.login(this.loginRequest)).then(value => {
+      this.toaster.success("Success Login", "Successful!!")
+      localStorage.clear();
+      localStorage.setItem("jwtToken", value["access_token"])
+      localStorage.setItem("refreshToken", value["refresh_token"])
+      this.router.navigate(["/"])
     })
   }
 
+  //   localStorage.clear();
+  //         localStorage.setItem("jwtToken", value["access_token"])
+  //         localStorage.setItem("refreshToken", value["refresh_token"])
+  //
+  //         setTimeout(this.redirectToHome, 1700)
 
   redirectToHome = () => {
     window.location.href = Endpoints.BASE_URL; // Endpoints.HOME yerine direkt URL'yi belirtin

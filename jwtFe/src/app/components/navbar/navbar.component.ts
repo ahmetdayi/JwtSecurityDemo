@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 
 import {NgIf} from "@angular/common";
-import {RouterLink} from "@angular/router";
+import {Router, RouterLink} from "@angular/router";
 import {routes} from "../../app.routes";
 import {AuthService} from "../../services/auth.service";
 import {Endpoints} from "../../utility/endpoints";
@@ -20,12 +20,16 @@ import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 })
 export class NavbarComponent implements OnInit{
   isAuthenticated : boolean
+  isLoggedIn:boolean
 
   constructor(private authService: AuthService,
-              private toaster:ToastrService) {
+              private toaster:ToastrService,
+              private router:Router) {
+
   }
   redirectLogin(){
-    window.location.href = Endpoints.BASE_URL + "/login"
+    this.router.navigate(["/login"])
+    // window.location.href = Endpoints.BASE_URL + "/login"
   }
 
   logout() {
@@ -36,14 +40,19 @@ export class NavbarComponent implements OnInit{
         this.toaster.error("Logout","ERROR!!")
       }
     });
-    this.redirectLogin();
-    this.toaster.success("Logout","Successful!!")
-    this.isAuthenticated = false
+    this.router.navigate(["/login"]).then(value => {
+      this.toaster.success("Please Login to do process","LOGOUT!!")
+    })
+
+
 
   }
 
   ngOnInit(): void {
-    this.isAuthenticated = this.authService.isAuthenticated()
+    //TODO behavioru dinledik
+    this.authService.loggedIn$.subscribe((loggedIn) => {
+      this.isLoggedIn = loggedIn;
+    });
   }
 
 

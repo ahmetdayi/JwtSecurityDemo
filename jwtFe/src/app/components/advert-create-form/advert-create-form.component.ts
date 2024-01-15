@@ -15,16 +15,16 @@ export class AdvertCreateFormComponent implements OnInit{
   constructor(private advertService:AdvertService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
-    const request:CreateAdvertRequest = {price:"12223",name:"asdsad",title:"asdasdsadd"}
-   let response =  this.advertService.createAdvert(request).subscribe({
-     next:value => {
-       console.log(value)
-     },error:err => {
-       console.log(err)
-     }
-   })
+    const request: CreateAdvertRequest = {price: "12223", name: "asdsad", title: "asdasdsadd"}
+    let [response] = await Promise.all([(await this.advertService.createAdvert(request)).subscribe({
+      next: value => {
+        console.log(value)
+      }, error: err => {
+        console.log(err)
+      }
+    })])
 
   }
 

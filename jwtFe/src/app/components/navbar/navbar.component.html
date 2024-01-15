@@ -1,8 +1,8 @@
 <nav class="navbar bg-body-tertiary">
   <form class="container-fluid justify-content-start shadow-lg">
 
-  <button *ngIf="!isAuthenticated" (click)="redirectLogin()" class="btn btn-outline-success me-2 m-3" type="button">Login</button>
-    <ng-container *ngIf="isAuthenticated ">
+  <button *ngIf="!isLoggedIn" (click)="redirectLogin()" class="btn btn-outline-success me-2 m-3" type="button">Login</button>
+    <ng-container *ngIf="isLoggedIn ">
       <button  (click)="logout()" class="btn btn-outline-success me-2 m-3" type="button">Logout</button>
       <button  routerLink="createAdvert" class="btn btn-outline-success me-2 m-3" type="button">Create Advert</button>
       <button  routerLink="home" class="btn btn-outline-success me-2 m-3" type="button">HOME</button>

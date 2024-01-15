@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpHeaders} from "@angular/common/http";
 import {ToastrService} from "ngx-toastr";
 import {jwtDecode} from "jwt-decode";
-import {catchError, map, Observable, of} from "rxjs";
+import {catchError, firstValueFrom, map, Observable, of} from "rxjs";
 import {Endpoints} from "../utility/endpoints";
 import {HttpService} from "./http.service";
 
@@ -22,39 +22,46 @@ export class TokenService {
         }));
     }
 
-  public tokenHeader = (): HttpHeaders => {
+  public tokenHeader = async (): Promise<HttpHeaders> => {
 
-    let jwtToken: string =localStorage.getItem("jwtToken")
+    let jwtToken: string = localStorage.getItem("jwtToken")
     const decodeTokenExp: number = jwtDecode(jwtToken).exp;
     const currentTime: number = Date.now() / 1000;
     const isExpired: boolean = decodeTokenExp < currentTime
 
     if (!isExpired) {
-        jwtToken = localStorage.getItem("jwtToken")
+      jwtToken = localStorage.getItem("jwtToken")
       return new HttpHeaders({
         'Authorization': `Bearer ${jwtToken}`
       })
     } else {
-      this.getJwtTokenByRefreshToken()
-        jwtToken = localStorage.getItem("jwtToken")
-        return new HttpHeaders({
-            'Authorization': `Bearer ${jwtToken}`
-        })
+      //TODO bu methodu beklemek gerekiyor sonra localstorage dememe lazim
+      await this.getJwtTokenByRefreshToken()
+      jwtToken = localStorage.getItem("jwtToken")
+      return new HttpHeaders({
+        'Authorization': `Bearer ${jwtToken}`
+      })
     }
 
   }
 
-   public getJwtTokenByRefreshToken() {
-        this.refreshToken().subscribe({
-           next:value => {
-               localStorage.setItem("jwtToken", value["access_token"]);
-               localStorage.setItem("refreshToken", value["refresh_token"]);
-           },error:err => {
-                console.log(err)
-            }
-       })
-       return {accessToken:localStorage.getItem("access_token"),refreshToken:localStorage.getItem("refresh_token")}
-  }
+  //TODO await yaparak ilk basta tokeni almasini sonra devam etmesini sagladik
+   public async getJwtTokenByRefreshToken() {
+    let promise =await firstValueFrom(this.refreshToken());
+     console.log(promise)
+     localStorage.setItem("jwtToken", promise["access_token"]);
+     localStorage.setItem("refreshToken", promise["refresh_token"]);
+     // let [response] = await Promise.all([this.refreshToken().subscribe({
+     //   next: value => {
+     //     localStorage.setItem("jwtToken", value["access_token"]);
+     //     localStorage.setItem("refreshToken", value["refresh_token"]);
+     //   }, error: err => {
+     //     console.log(err)
+     //   }
+     // })])
+     // console.log(response)
+     return {accessToken: localStorage.getItem("access_token"), refreshToken: localStorage.getItem("refresh_token")}
+   }
 
 }
 //.pipe(
@@ -69,3 +76,4 @@ export class TokenService {
 //                return of(false);
 //            })
 //        )
+

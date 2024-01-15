@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {LoginRequest} from "../models/loginRequest";
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {LoginResponse} from "../models/loginResponse";
 import {Endpoints} from "../utility/endpoints";
 import {Router} from "@angular/router";
@@ -15,12 +15,17 @@ import {TokenService} from "./token.service";
   providedIn: 'root'
 })
 export class AuthService {
+  //TODO login ve logout edildiginde nav barin degismesi icin BehaviorSubject olusturulup ona kaydolundu
+  private loggedInSubject = new BehaviorSubject<boolean>(false);
+  //TODO loggedIn$ kullanilarakta bu deger degistirildiginde bunu izleyen ogelerinde degismesi saglandi 28 ve 37.satir
+  public loggedIn$ = this.loggedInSubject.asObservable();
 
   constructor(
     private http: HttpService,
     private tokenService: TokenService
   ) { }
   public login(request: LoginRequest): Observable<LoginResponse> {
+    this.loggedInSubject.next(true);
     return this.http.POST<LoginResponse>(Endpoints.LOGIN, request);
   }
   public register(request: RegisterRequest): Observable<RegisterResponse> {
@@ -29,6 +34,7 @@ export class AuthService {
 
   public logout():Observable<any> {
     localStorage.clear();
+    this.loggedInSubject.next(false);
     return this.http.POST<any>(Endpoints.LOGOUT,{});
   }
 

@@ -46,6 +46,8 @@ export class TokenService {
   }
 
   //TODO await yaparak ilk basta tokeni almasini sonra devam etmesini sagladik
+  //TODO toPromise kalktigindan dolayi eger tek item degil de array donuyorsa observabl;e olarak kaliyor html de async yaziyoruz yazdirirken
+
    public async getJwtTokenByRefreshToken() {
     let promise =await firstValueFrom(this.refreshToken());
      console.log(promise)
@@ -62,7 +64,6 @@ export class TokenService {
      // console.log(response)
      return {accessToken: localStorage.getItem("access_token"), refreshToken: localStorage.getItem("refresh_token")}
    }
-
 }
 //.pipe(
 //            map(response => {

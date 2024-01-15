@@ -25,3 +25,27 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+
+/////////////////////////////////
+array gelen bir degeri await etmek istiyorsak
+
+``` typescript
+
+initialData: Partial<LoginRequest[]> = [{email:"asd",password:"asdsad"},{email:"asd",password:"asdsad"},{email:"asd",password:"asdsad"}]
+
+observable:Observable<LoginRequest[]> = of(this.initialData)
+ngOnInit(): void {
+// observable'ın bir denemecisi oluşturun
+  console.log("aaa")
+let subscription = this.observable?.subscribe({
+      next:value => {
+                  console.log(value)
+            },error:err => {
+                  console.log(err)
+            },complete:() => {
+                  localStorage.setItem("a","a")
+            }
+    }
+   );
+      console.log(localStorage.getItem("a"))
+  }

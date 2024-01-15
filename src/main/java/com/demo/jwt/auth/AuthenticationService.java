@@ -80,10 +80,11 @@ public class AuthenticationService {
                     .orElseThrow(() -> new RuntimeException("email bulunamadi "));
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
+                var newRefreshToken = jwtService.generateRefreshToken(user);
                 tokenRepository.save(new InvalidToken(refreshToken,TokenType.BEARER,user));
                 var authResponse = AuthenticationResponse.builder()
                         .accessToken(accessToken)
-                        .refreshToken(refreshToken)
+                        .refreshToken(newRefreshToken)
                         .build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }

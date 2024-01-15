@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AdvertService} from "../../services/advert.service";
+import {catchError, map, of} from "rxjs";
+import {CreateAdvertRequest} from "../../models/createAdvertRequest";
 
 @Component({
   selector: 'app-advert-create-form',
@@ -7,6 +10,23 @@ import { Component } from '@angular/core';
   templateUrl: './advert-create-form.component.html',
   styleUrl: './advert-create-form.component.css'
 })
-export class AdvertCreateFormComponent {
+export class AdvertCreateFormComponent implements OnInit{
+
+  constructor(private advertService:AdvertService) {
+  }
+
+  ngOnInit(): void {
+
+    const request:CreateAdvertRequest = {price:"12223",name:"asdsad",title:"asdasdsadd"}
+   let response =  this.advertService.createAdvert(request).subscribe({
+     next:value => {
+       console.log(value)
+     },error:err => {
+       console.log(err)
+     }
+   })
+
+  }
+
 
 }

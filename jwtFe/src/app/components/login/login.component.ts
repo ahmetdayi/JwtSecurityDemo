@@ -53,8 +53,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(this.loginRequest).subscribe({
       next:value => {
         localStorage.clear();
-        localStorage.setItem("jwtToken", value["accessToken"])
-        localStorage.setItem("refreshToken", value["refreshToken"])
+        localStorage.setItem("jwtToken", value["access_token"])
+        localStorage.setItem("refreshToken", value["refresh_token"])
         this.toaster.success("Success Login","Successful!!")
         setTimeout(this.redirectToHome, 1700)
       },error:err => {
@@ -66,5 +66,8 @@ export class LoginComponent implements OnInit {
 
   redirectToHome = () => {
     window.location.href = Endpoints.BASE_URL; // Endpoints.HOME yerine direkt URL'yi belirtin
+  };
+  redirectToSignup = () => {
+    window.location.href = Endpoints.BASE_URL + "/signup"; // Endpoints.HOME yerine direkt URL'yi belirtin
   };
 }

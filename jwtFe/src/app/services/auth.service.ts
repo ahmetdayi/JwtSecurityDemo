@@ -7,6 +7,9 @@ import {Router} from "@angular/router";
 import {HttpService} from "./http.service";
 import {RegisterRequest} from "../models/registerRequest";
 import {RegisterResponse} from "../models/registerResponse";
+import {HttpHeaders} from "@angular/common/http";
+import {jwtDecode} from "jwt-decode";
+import {TokenService} from "./token.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +18,7 @@ export class AuthService {
 
   constructor(
     private http: HttpService,
-    private router: Router
+    private tokenService: TokenService
   ) { }
   public login(request: LoginRequest): Observable<LoginResponse> {
     return this.http.POST<LoginResponse>(Endpoints.LOGIN, request);
@@ -23,14 +26,32 @@ export class AuthService {
   public register(request: RegisterRequest): Observable<RegisterResponse> {
     return this.http.POST<RegisterResponse>(Endpoints.REGISTER, request);
   }
+
   public logout():Observable<any> {
     localStorage.clear();
     return this.http.POST<any>(Endpoints.LOGOUT,{});
   }
 
   isAuthenticated() {
-    return !!localStorage.getItem("jwtToken");
-  }
+    const token = localStorage.getItem("jwtToken")
 
+    if (token != null ){
+        const isExpired = jwtDecode(token).exp<(Date.now()/1000)
+      if (isExpired){
+          const response = this.tokenService.getJwtTokenByRefreshToken()
+
+          return true
+      }else {
+        return true
+      }
+
+    }
+    else if(token == null){
+      return false
+    }
+    return true;
+
+
+  }
 
 }

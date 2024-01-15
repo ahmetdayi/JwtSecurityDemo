@@ -25,28 +25,25 @@
 
     </div>
     <div class="form-floating">
-      <input required type="text" class="form-control" id="name" formControlName="name" placeholder="name" style="background-color: rgba(255, 255, 255, 0.6)">
-      <label for="name">Name</label>
+      <input required type="text" class="form-control" id="firstname" formControlName="firstname" placeholder="firstname" style="background-color: rgba(255, 255, 255, 0.6)">
+      <label for="firstname">Firstname</label>
 
     </div>
     <div class="form-floating">
-      <input required type="text" class="form-control" id="surname" formControlName="surname" placeholder="surname" style="background-color: rgba(255, 255, 255, 0.6)">
-      <label for="surname">Surname</label>
+      <input required type="text" class="form-control" id="lastname" formControlName="lastname" placeholder="lastname" style="background-color: rgba(255, 255, 255, 0.6)">
+      <label for="lastname">Lastname</label>
 
     </div>
     <div class="form-floating">
-      <input  type="text" class="form-control" id="inviteCode" formControlName="inviteCode" placeholder="inviteCode" style="background-color: rgba(255, 255, 255, 0.6)">
-      <label for="inviteCode">Invite Code</label>
+      <input  type="text" class="form-control" id="role" formControlName="role" placeholder="role" style="background-color: rgba(255, 255, 255, 0.6)">
+      <label for="role">Role</label>
 
     </div>
     <div class="form-floating">
       <input type="password" class="form-control" id="floatingPassword" formControlName="password" placeholder="Password" required style="background-color: rgba(255, 255, 255, 0.6)">
       <label for="floatingPassword">Password</label>
     </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="confirmPassword" required style="background-color: rgba(255, 255, 255, 0.6)">
-      <label for="confirmPassword">Confirm Password</label>
-    </div>
+
     <div *ngIf="form.invalid && (form.dirty || form.touched)" class="text-danger">Please fill in all required fields.</div>
     <br>
     <button  style="background-color:#003e5c;color: white" class="btn  w-100 py-2" type="submit">Sign up</button>

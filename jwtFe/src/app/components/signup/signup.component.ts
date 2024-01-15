@@ -1,22 +1,31 @@
-import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
+import {CreateAdvertRequest} from "../../models/createAdvertRequest";
+import {RegisterRequest} from "../../models/registerRequest";
+import {AuthService} from "../../services/auth.service";
+import {RegisterResponse} from "../../models/registerResponse";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [],
+  imports: [
+    ReactiveFormsModule,
+    NgIf
+  ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit{
   form: FormGroup;
-  createAdvertRequest: CreateChildRequest;
+  registerRequest: RegisterRequest;
+  registerResponse:RegisterResponse
 
   constructor(
     private formBuilder: FormBuilder,
-    private childService: ChildService,
+    private authService: AuthService,
     private router: Router,
     private toaster:ToastrService
   ) {
@@ -24,24 +33,36 @@ export class SignupComponent {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
-      name: ['', Validators.required],
-      surname: ['', Validators.required],
+      firstname: ['', Validators.required],
+      lastname: ['', Validators.required],
       email: ['', Validators.required],
       password: ['', [Validators.required]],
-      confirmPassword: ['', [Validators.required]],
-      inviteCode: [''],
+      role: [''],
     });
   }
   onSubmit() {
     if (this.form.valid) {
-      this.createChildRequest = {inviteCodeList:[this.form.value["inviteCode"]],...this.form.value}
+      this.registerRequest = this.form.value
       console.log(this.form.value)
       console.log(this.form.value.name)
-      this.createParent(this.createChildRequest)
+      this.register(this.registerRequest)
 
     } else {
       this.form.markAllAsTouched();
     }
+  }
+
+  register(registerRequest:RegisterRequest){
+    this.authService.register(registerRequest).subscribe({
+      next:value => {
+        this.registerResponse = value;
+        this.toaster.success("Successful registered","SUCCESSFUL!!")
+        console.log(value)
+
+      },error:err => {
+        this.toaster.error("register failed","ERROR!!")
+      }
+    })
   }
 
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 import {NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
@@ -6,6 +6,7 @@ import {routes} from "../../app.routes";
 import {AuthService} from "../../services/auth.service";
 import {Endpoints} from "../../utility/endpoints";
 import {ToastrService} from "ngx-toastr";
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 @Component({
   selector: 'app-navbar',
@@ -17,9 +18,10 @@ import {ToastrService} from "ngx-toastr";
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit{
+  isAuthenticated : boolean
 
-  constructor(public authService: AuthService,
+  constructor(private authService: AuthService,
               private toaster:ToastrService) {
   }
   redirectLogin(){
@@ -36,7 +38,13 @@ export class NavbarComponent {
     });
     this.redirectLogin();
     this.toaster.success("Logout","Successful!!")
+    this.isAuthenticated = false
 
   }
+
+  ngOnInit(): void {
+    this.isAuthenticated = this.authService.isAuthenticated()
+  }
+
 
 }
